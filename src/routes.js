@@ -4,6 +4,7 @@ import Login from './pages/auth/Login';
 import Dashboard from './pages/dashboard/Dashboard';
 import Users from './pages/dashboard/Users';
 import NotFound from './pages/errors/NotFound';
+import PetsPage from './pages/dashboard/Pets';
 
 const AppRoutes = () => {
   return (
@@ -12,6 +13,7 @@ const AppRoutes = () => {
       <Route element={<ProtectedRoute />}>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/users" element={<Users />} />
+        <Route path="/pets" element={<PetsPage />} />
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>

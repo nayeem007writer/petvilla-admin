@@ -1,5 +1,5 @@
 import { Drawer, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
-import { Dashboard, People, Settings } from '@mui/icons-material';
+import { Dashboard, People, Settings,Pets } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 
 const Sidebar = () => {
@@ -17,6 +17,10 @@ const Sidebar = () => {
         <ListItem button component={Link} to="/settings">
           <ListItemIcon><Settings /></ListItemIcon>
           <ListItemText primary="Settings" />
+        </ListItem>
+        <ListItem button component={Link} to="/pets">
+          <ListItemIcon><Pets /></ListItemIcon>
+          <ListItemText primary="Pets" />
         </ListItem>
       </List>
     </Drawer>
