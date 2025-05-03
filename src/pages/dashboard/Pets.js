@@ -68,7 +68,7 @@ const PetsPage = () => {
   const fetchPets = async () => {
     setLoading(true);
     try {
-      const response = await api.get(`/pets/customer?limit=${rowsPerPage}&page=${page + 1}`);
+      const response = await api.get(`/pets/admin?limit=${rowsPerPage}&page=${page + 1}`);
       setPets(response.data.data);
       setTotal(response.data.meta.total);
 

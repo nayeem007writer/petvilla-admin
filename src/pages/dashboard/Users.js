@@ -46,6 +46,7 @@ const Users = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isTogglingStatus, setIsTogglingStatus] = useState(false);
   const [stats, setStats] = useState({ 
     total: 0, 
     active: 0, 
@@ -110,6 +111,21 @@ const Users = () => {
     setSelectedUser(null);
   };
 
+  const handleToggleStatus = async (userId) => {
+    setIsTogglingStatus(true);
+    setSelectedUser(users.find(user => user.id === userId));
+    try {
+      await api.patch(`/users/${userId}/activate`);
+      toast.success('User status updated successfully');
+      fetchUsers();
+    } catch (error) {
+      console.error('Failed to toggle user status:', error);
+      toast.error(error.response?.data?.message || 'Failed to update user status');
+    } finally {
+      setIsTogglingStatus(false);
+    }
+  };
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -145,37 +161,89 @@ const Users = () => {
       <Box sx={{ p: 3 }}>
         {/* Statistics Section */}
         <Grid container spacing={3} sx={{ mb: 3 }}>
-          <Grid item xs={12} md={6}>
-            <Paper sx={{ p: 3, borderRadius: 2 }}>
-              <Typography variant="h6" gutterBottom>
+        <Grid item xs={12} md={6}>
+  <Paper sx={{ 
+    p: 3, 
+    borderRadius: 2,
+    boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.08)',
+    background: 'linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%)'
+  }}>
+    <Typography variant="h6" gutterBottom sx={{ 
+      fontWeight: 600,
+      color: '#2d3748',
+      mb: 3,
+      display: 'flex',
+      alignItems: 'center'
+    }}>
+      <Box component="span" sx={{
+        width: 8,
+        height: 8,
+        bgcolor: '#30B68F',
+        borderRadius: '50%',
+        mr: 1.5
+      }} />
                 User Statistics
-              </Typography>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                <Box>
-                  <Typography variant="body2" color="text.secondary">
-                    Total Users
-                  </Typography>
-                  <Typography variant="h4">{stats.total}</Typography>
-                </Box>
-                <Box>
-                  <Typography variant="body2" color="text.secondary">
-                    Active
-                  </Typography>
-                  <Typography variant="h4" color="success.main">
-                    {stats.active}
-                  </Typography>
-                </Box>
-                <Box>
-                  <Typography variant="body2" color="text.secondary">
-                    Inactive
-                  </Typography>
-                  <Typography variant="h4" color="error.main">
-                    {stats.inactive}
-                  </Typography>
-                </Box>
-              </Box>
-            </Paper>
-          </Grid>
+                </Typography>
+    <Box sx={{ 
+      display: 'flex', 
+      justifyContent: 'space-between',
+      gap: 2,
+      '& > div': {
+        flex: 1,
+        textAlign: 'center',
+        p: 2,
+        borderRadius: 1,
+        backgroundColor: 'rgba(245, 247, 250, 0.5)'
+      }
+    }}>
+      <Box>
+        <Typography variant="body2" color="text.secondary" sx={{ 
+          mb: 1,
+          fontWeight: 500,
+          fontSize: '0.875rem'
+        }}>
+          Total
+        </Typography>
+        <Typography variant="h4" sx={{ 
+          fontWeight: 700,
+          color: '#2d3748'
+        }}>
+          {stats.total}
+        </Typography>
+      </Box>
+      <Box>
+        <Typography variant="body2" color="text.secondary" sx={{ 
+          mb: 1,
+          fontWeight: 500,
+          fontSize: '0.875rem'
+        }}>
+          Active
+        </Typography>
+        <Typography variant="h4" sx={{ 
+          fontWeight: 700,
+          color: '#4CAF50'
+        }}>
+          {stats.active}
+        </Typography>
+      </Box>
+      <Box>
+        <Typography variant="body2" color="text.secondary" sx={{ 
+          mb: 1,
+          fontWeight: 500,
+          fontSize: '0.875rem'
+        }}>
+          Inactive
+        </Typography>
+        <Typography variant="h4" sx={{ 
+          fontWeight: 700,
+          color: '#F44336'
+        }}>
+          {stats.inactive}
+        </Typography>
+      </Box>
+    </Box>
+  </Paper>
+</Grid>
           <Grid item xs={12} md={6}>
             <Paper sx={{ p: 3, borderRadius: 2, height: '100%' }}>
               <Typography variant="h6" gutterBottom>
@@ -299,8 +367,17 @@ const Users = () => {
                     </TableCell>
                     <TableCell>
                       <Box sx={{ display: 'flex', gap: 1 }}>
-                        <IconButton size="small" color="primary">
-                          <Edit fontSize="small" />
+                        <IconButton 
+                          size="small" 
+                          color="primary"
+                          onClick={() => handleToggleStatus(user.id)}
+                          disabled={isTogglingStatus}
+                        >
+                          {isTogglingStatus && selectedUser?.id === user.id ? (
+                            <CircularProgress size={20} color="inherit" />
+                          ) : (
+                            <Edit fontSize="small" />
+                          )}
                         </IconButton>
                         <IconButton 
                           size="small" 
